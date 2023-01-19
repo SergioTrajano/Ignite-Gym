@@ -3,10 +3,11 @@ import { useFonts, Roboto_400Regular, Roboto_700Bold } from "@expo-google-fonts/
 import { NativeBaseProvider } from "native-base";
 
 import { THEME } from "./src/theme";
+import { SignIn } from "@screens/SignIn";
 import { Loading } from "@components/Loading";
 
 export default function App() {
-    const [fontsLoaded] = useFonts([Roboto_400Regular, Roboto_700Bold]);
+    const [fontsLoaded] = useFonts({ Roboto_400Regular, Roboto_700Bold });
 
     return (
         <NativeBaseProvider theme={THEME}>
@@ -16,7 +17,7 @@ export default function App() {
                 barStyle="light-content"
             />
 
-            {fontsLoaded ? <></> : <Loading />}
+            {fontsLoaded ? <SignIn /> : <Loading />}
         </NativeBaseProvider>
     );
 }
