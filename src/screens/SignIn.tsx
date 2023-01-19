@@ -1,4 +1,4 @@
-import { Center, Image, Text, VStack } from "native-base";
+import { Center, Heading, Image, Text, VStack } from "native-base";
 
 import LogoSvg from "@assets/logo.svg";
 import BackgroundImg from "@assets/background.png";
@@ -25,6 +25,17 @@ export function SignIn() {
                 >
                     Treine sua mente e o seu corpo
                 </Text>
+            </Center>
+
+            <Center>
+                <Heading
+                    fontFamily="heading"
+                    mb={6}
+                    fontSize="xl"
+                    color="gray.100"
+                >
+                    Acesse sua conta
+                </Heading>
             </Center>
         </VStack>
     );
