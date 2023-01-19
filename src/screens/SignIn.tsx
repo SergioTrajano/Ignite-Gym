@@ -10,6 +10,7 @@ export function SignIn() {
         <VStack
             flex={1}
             bg="gray.700"
+            padding={10}
         >
             <Image
                 source={BackgroundImg}
