@@ -36,7 +36,7 @@ export function SignIn() {
                     </Text>
                 </Center>
 
-                <Center marginBottom={0}>
+                <Center>
                     <Heading
                         fontFamily="heading"
                         mb={6}
