@@ -36,7 +36,7 @@ export function SignIn() {
                     </Text>
                 </Center>
 
-                <Center>
+                <Center marginBottom={0}>
                     <Heading
                         fontFamily="heading"
                         mb={6}
@@ -59,7 +59,7 @@ export function SignIn() {
                     <Button title="Acessar" />
                 </Center>
 
-                <Center marginTop={24}>
+                <Center marginTop={48}>
                     <Text
                         color="gray.100"
                         fontSize="sm"
