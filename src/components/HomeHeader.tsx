@@ -1,6 +1,8 @@
-import { Heading, HStack, Text, VStack } from "native-base";
+import { Heading, HStack, Icon, Text, VStack } from "native-base";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { UserPhoto } from "./UserPhoto";
+import { TouchableOpacity } from "react-native";
 
 export function HomeHeader() {
     return (
@@ -15,7 +17,7 @@ export function HomeHeader() {
                 size={16}
                 source={{ uri: "https://avatars.githubusercontent.com/u/102706269?v=4" }}
                 alt="Imagem do usuario"
-                mr={4}
+                marginRight={4}
             />
             <VStack>
                 <Text
@@ -32,6 +34,15 @@ export function HomeHeader() {
                     Sergio
                 </Heading>
             </VStack>
+
+            <TouchableOpacity>
+                <Icon
+                    as={MaterialCommunityIcons}
+                    name="logout"
+                    size={7}
+                    color="gray.200"
+                />
+            </TouchableOpacity>
         </HStack>
     );
 }
