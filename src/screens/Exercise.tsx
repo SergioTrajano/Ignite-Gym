@@ -1,10 +1,12 @@
 import { useNavigation } from "@react-navigation/native";
 
 import { TouchableOpacity } from "react-native";
-import { Icon, VStack } from "native-base";
+import { Heading, HStack, Icon, Text, VStack } from "native-base";
 import { Feather } from "@expo/vector-icons";
 
 import { NavigatorAppRoutesProps } from "@routes/app.routes";
+
+import BodySvg from "@assets/body.svg";
 
 export function Exercise() {
     const { goBack } = useNavigation<NavigatorAppRoutesProps>();
@@ -27,6 +29,33 @@ export function Exercise() {
                         size={6}
                     />
                 </TouchableOpacity>
+
+                <HStack
+                    justifyContent="space-between"
+                    alignItems="center"
+                    marginTop={4}
+                    marginBottom={8}
+                >
+                    <Heading
+                        color="gray.100"
+                        fontSize="lg"
+                        flexShrink={1}
+                    >
+                        Abdominal
+                    </Heading>
+
+                    <HStack>
+                        <BodySvg />
+
+                        <Text
+                            textTransform="capitalize"
+                            color="gray.200"
+                            marginLeft={1}
+                        >
+                            Abdomen
+                        </Text>
+                    </HStack>
+                </HStack>
             </VStack>
         </VStack>
     );
