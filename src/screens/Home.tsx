@@ -43,6 +43,8 @@ export function Home() {
                 _contentContainerStyle={{ paddingX: 8 }}
                 marginY={10}
                 maxHeight={10}
+                minHeight={10}
+                flex={1}
             />
 
             <VStack paddingX={8}>
