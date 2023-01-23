@@ -9,7 +9,7 @@ export function Input({ errorMessage = null, isInvalid, ...rest }: Props) {
     return (
         <FormControl
             isInvalid={invalid}
-            marginBottom={errorMessage ? 0 : 7}
+            marginBottom={4}
         >
             <NativeBaseInut
                 backgroundColor="gray.700"
