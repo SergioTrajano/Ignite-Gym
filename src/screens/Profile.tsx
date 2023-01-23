@@ -16,7 +16,7 @@ export function Profile() {
         <VStack flex={1}>
             <ScreenHeader title="Perfil" />
 
-            <ScrollView>
+            <ScrollView contentContainerStyle={{ paddingBottom: 36 }}>
                 <Center
                     marginTop={6}
                     paddingX={10}
@@ -57,17 +57,13 @@ export function Profile() {
                         backgroundColor="gray.600"
                         isDisabled
                     />
-                </Center>
 
-                <VStack
-                    paddingX={10}
-                    marginTop={12}
-                    marginBottom={9}
-                >
                     <Heading
                         color="gray.200"
                         fontSize="md"
                         marginBottom={2}
+                        marginTop={12}
+                        alignSelf="flex-start"
                     >
                         Alterar senha
                     </Heading>
@@ -92,7 +88,7 @@ export function Profile() {
                         title="Atualizar"
                         marginTop={4}
                     />
-                </VStack>
+                </Center>
             </ScrollView>
         </VStack>
     );
