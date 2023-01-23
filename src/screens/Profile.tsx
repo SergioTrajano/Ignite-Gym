@@ -5,6 +5,7 @@ import ScreenHeader from "@components/ScreenHeader";
 import { UserPhoto } from "@components/UserPhoto";
 import { TouchableOpacity } from "react-native";
 import { Input } from "@components/Input";
+import { Button } from "@components/Button";
 
 const PHOTO_SIZE = 33;
 
@@ -85,6 +86,11 @@ export function Profile() {
                         placeholder="Confirme nova senha"
                         secureTextEntry={true}
                         backgroundColor="gray.600"
+                    />
+
+                    <Button
+                        title="Atualizar"
+                        marginTop={4}
                     />
                 </VStack>
             </ScrollView>
