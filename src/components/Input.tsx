@@ -9,7 +9,7 @@ export function Input({ errorMessage = null, isInvalid, ...rest }: Props) {
     return (
         <FormControl
             isInvalid={invalid}
-            marginBottom={4}
+            marginBottom={invalid ? 0 : 6}
         >
             <NativeBaseInut
                 backgroundColor="gray.700"
@@ -32,7 +32,9 @@ export function Input({ errorMessage = null, isInvalid, ...rest }: Props) {
                 {...rest}
             />
 
-            <FormControl.ErrorMessage>{errorMessage}</FormControl.ErrorMessage>
+            <FormControl.ErrorMessage _text={{ color: "red.500", fontSize: "2xs" }}>
+                {errorMessage}
+            </FormControl.ErrorMessage>
         </FormControl>
     );
 }
