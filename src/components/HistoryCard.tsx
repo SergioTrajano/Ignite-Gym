@@ -12,11 +12,15 @@ export default function HistoryCard() {
             rounded="md"
             backgroundColor="gray.600"
         >
-            <VStack>
+            <VStack
+                marginRight={5}
+                flex={1}
+            >
                 <Heading
                     color="white"
                     fontSize="md"
                     textTransform="capitalize"
+                    numberOfLines={1}
                 >
                     Costas
                 </Heading>
