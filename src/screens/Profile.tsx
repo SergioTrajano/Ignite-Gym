@@ -11,24 +11,33 @@ import { Button } from "@components/Button";
 const PHOTO_SIZE = 33;
 
 export function Profile() {
-    const [photoIsLoading, SetPhotoisLoading] = useState<boolean>(false);
+    const [photoIsLoading, setPhotoisLoading] = useState<boolean>(false);
     const [userPhoto, setUserPhoto] = useState<string | undefined>(
         "http://github.com/SergioTrajano.png"
     );
 
     async function handleUserPhotoSelect() {
-        const selectedPhoto = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            quality: 1,
-            aspect: [4, 4],
-            allowsEditing: true,
-        });
+        setPhotoisLoading(true);
 
-        if (selectedPhoto.canceled) {
-            return;
+        try {
+            const selectedPhoto = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                quality: 1,
+                aspect: [4, 4],
+                allowsEditing: true,
+            });
+
+            if (selectedPhoto.canceled) {
+                return;
+            }
+            if (selectedPhoto.assets[0].uri) {
+                setUserPhoto(selectedPhoto.assets[0].uri);
+            }
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setPhotoisLoading(false);
         }
-
-        setUserPhoto(selectedPhoto.assets[0].uri);
     }
 
     return (
