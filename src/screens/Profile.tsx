@@ -1,21 +1,21 @@
 import { useState } from "react";
 import { Center, ScrollView, VStack, Skeleton, Text, Heading, useToast } from "native-base";
+import { TouchableOpacity } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
 
 import ScreenHeader from "@components/ScreenHeader";
 import { UserPhoto } from "@components/UserPhoto";
-import { TouchableOpacity } from "react-native";
 import { Input } from "@components/Input";
 import { Button } from "@components/Button";
+
+import UserPhotoDefaultPng from "@assets/userPhotoDefault.png";
 
 const PHOTO_SIZE = 33;
 
 export function Profile() {
     const [photoIsLoading, setPhotoisLoading] = useState<boolean>(false);
-    const [userPhoto, setUserPhoto] = useState<string | undefined>(
-        "http://github.com/SergioTrajano.png"
-    );
+    const [userPhoto, setUserPhoto] = useState<string | undefined>("");
 
     const toast = useToast();
 
@@ -39,7 +39,7 @@ export function Profile() {
                 if (photoInfo.size && photoInfo.size > 5) {
                     toast.show({
                         title: "A imagem deve ser menor que 5MB",
-                        placement: "bottom",
+                        placement: "top",
                         bgColor: "red.500",
                     });
 
@@ -73,7 +73,7 @@ export function Profile() {
                         display={photoIsLoading ? "flex" : "none"}
                     />
                     <UserPhoto
-                        source={{ uri: userPhoto }}
+                        source={userPhoto !== "" ? { uri: userPhoto } : UserPhotoDefaultPng}
                         alt="Foto do usuario"
                         size={PHOTO_SIZE}
                         display={photoIsLoading ? "none" : "flex"}
