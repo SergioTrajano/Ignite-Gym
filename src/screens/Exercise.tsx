@@ -1,12 +1,16 @@
 import { useNavigation } from "@react-navigation/native";
 
 import { TouchableOpacity } from "react-native";
-import { Heading, HStack, Icon, Image, Text, VStack } from "native-base";
+import { Box, Heading, HStack, Icon, Image, Text, VStack } from "native-base";
 import { Feather } from "@expo/vector-icons";
 
 import { NavigatorAppRoutesProps } from "@routes/app.routes";
 
 import BodySvg from "@assets/body.svg";
+import SeriesSvg from "@assets/series.svg";
+import RepetitionsSvg from "@assets/repetitions.svg";
+
+import { Button } from "@components/Button";
 
 export function Exercise() {
     const { goBack } = useNavigation<NavigatorAppRoutesProps>();
@@ -70,6 +74,41 @@ export function Exercise() {
                     resizeMode="cover"
                     rounded="lg"
                 />
+
+                <Box
+                    backgroundColor="gray.600"
+                    rounded="md"
+                    paddingBottom={4}
+                    paddingX={4}
+                >
+                    <HStack
+                        alignItems="center"
+                        justifyContent="space-around"
+                        marginBottom={6}
+                        marginTop={5}
+                    >
+                        <HStack>
+                            <SeriesSvg />
+                            <Text
+                                color="gray.200"
+                                marginLeft={2}
+                            >
+                                3 séries
+                            </Text>
+                        </HStack>
+                        <HStack>
+                            <RepetitionsSvg />
+                            <Text
+                                color="gray.200"
+                                marginLeft={2}
+                            >
+                                12 repetições
+                            </Text>
+                        </HStack>
+                    </HStack>
+
+                    <Button title="Marcar como realizado" />
+                </Box>
             </VStack>
         </VStack>
     );
