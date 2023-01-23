@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Center, ScrollView, VStack, Skeleton, Text, Heading } from "native-base";
+import * as ImagePicker from "expo-image-picker";
 
 import ScreenHeader from "@components/ScreenHeader";
 import { UserPhoto } from "@components/UserPhoto";
@@ -10,7 +11,25 @@ import { Button } from "@components/Button";
 const PHOTO_SIZE = 33;
 
 export function Profile() {
-    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [photoIsLoading, SetPhotoisLoading] = useState<boolean>(false);
+    const [userPhoto, setUserPhoto] = useState<string | undefined>(
+        "http://github.com/SergioTrajano.png"
+    );
+
+    async function handleUserPhotoSelect() {
+        const selectedPhoto = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            quality: 1,
+            aspect: [4, 4],
+            allowsEditing: true,
+        });
+
+        if (selectedPhoto.canceled) {
+            return;
+        }
+
+        setUserPhoto(selectedPhoto.assets[0].uri);
+    }
 
     return (
         <VStack flex={1}>
@@ -27,13 +46,13 @@ export function Profile() {
                         rounded="full"
                         startColor="gray.500"
                         endColor="gray.400"
-                        display={isLoading ? "flex" : "none"}
+                        display={photoIsLoading ? "flex" : "none"}
                     />
                     <UserPhoto
-                        source={{ uri: "https://github.com/SergioTrajano.png" }}
+                        source={{ uri: userPhoto }}
                         alt="Foto do usuario"
                         size={PHOTO_SIZE}
-                        display={isLoading ? "none" : "flex"}
+                        display={photoIsLoading ? "none" : "flex"}
                     />
 
                     <TouchableOpacity>
@@ -43,6 +62,7 @@ export function Profile() {
                             fontSize="md"
                             marginBottom={8}
                             marginTop={2}
+                            onPress={handleUserPhotoSelect}
                         >
                             Alterar foto
                         </Text>
