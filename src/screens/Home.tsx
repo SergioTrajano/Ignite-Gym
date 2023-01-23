@@ -53,6 +53,7 @@ export function Home() {
                     marginBottom={5}
                 >
                     <Heading
+                        fontFamily="heading"
                         color="gray.200"
                         fontSize="md"
                     >

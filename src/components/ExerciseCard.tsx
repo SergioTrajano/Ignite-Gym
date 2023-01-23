@@ -31,6 +31,7 @@ export default function ExerciseCard({ ...rest }: Props) {
                     <Heading
                         fontSize="lg"
                         color="white"
+                        fontFamily="heading"
                     >
                         Abdominal
                     </Heading>

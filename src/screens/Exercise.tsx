@@ -41,6 +41,7 @@ export function Exercise() {
                     marginBottom={8}
                 >
                     <Heading
+                        fontFamily="heading"
                         color="gray.100"
                         fontSize="lg"
                         flexShrink={1}
