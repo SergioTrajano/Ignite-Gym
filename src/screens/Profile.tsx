@@ -1,16 +1,59 @@
 import { useState } from "react";
-import { Center, ScrollView, VStack, Skeleton, Text, Heading } from "native-base";
+import { Center, ScrollView, VStack, Skeleton, Text, Heading, useToast } from "native-base";
+import { TouchableOpacity } from "react-native";
+import * as ImagePicker from "expo-image-picker";
+import * as FileSystem from "expo-file-system";
 
 import ScreenHeader from "@components/ScreenHeader";
 import { UserPhoto } from "@components/UserPhoto";
-import { TouchableOpacity } from "react-native";
 import { Input } from "@components/Input";
 import { Button } from "@components/Button";
+
+import UserPhotoDefaultPng from "@assets/userPhotoDefault.png";
 
 const PHOTO_SIZE = 33;
 
 export function Profile() {
-    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [photoIsLoading, setPhotoisLoading] = useState<boolean>(false);
+    const [userPhoto, setUserPhoto] = useState<string | undefined>("");
+
+    const toast = useToast();
+
+    async function handleUserPhotoSelect() {
+        setPhotoisLoading(true);
+
+        try {
+            const selectedPhoto = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                quality: 1,
+                aspect: [4, 4],
+                allowsEditing: true,
+            });
+
+            if (selectedPhoto.canceled) {
+                return;
+            }
+            if (selectedPhoto.assets[0].uri) {
+                const photoInfo = await FileSystem.getInfoAsync(selectedPhoto.assets[0].uri);
+
+                if (photoInfo.size && photoInfo.size / 1024 ** 2 > 5) {
+                    toast.show({
+                        title: "A imagem deve ser menor que 5MB",
+                        placement: "top",
+                        bgColor: "red.500",
+                    });
+
+                    return;
+                }
+
+                setUserPhoto(selectedPhoto.assets[0].uri);
+            }
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setPhotoisLoading(false);
+        }
+    }
 
     return (
         <VStack flex={1}>
@@ -27,13 +70,13 @@ export function Profile() {
                         rounded="full"
                         startColor="gray.500"
                         endColor="gray.400"
-                        display={isLoading ? "flex" : "none"}
+                        display={photoIsLoading ? "flex" : "none"}
                     />
                     <UserPhoto
-                        source={{ uri: "https://github.com/SergioTrajano.png" }}
+                        source={userPhoto !== "" ? { uri: userPhoto } : UserPhotoDefaultPng}
                         alt="Foto do usuario"
                         size={PHOTO_SIZE}
-                        display={isLoading ? "none" : "flex"}
+                        display={photoIsLoading ? "none" : "flex"}
                     />
 
                     <TouchableOpacity>
@@ -43,6 +86,7 @@ export function Profile() {
                             fontSize="md"
                             marginBottom={8}
                             marginTop={2}
+                            onPress={handleUserPhotoSelect}
                         >
                             Alterar foto
                         </Text>
