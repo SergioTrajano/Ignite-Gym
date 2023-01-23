@@ -8,10 +8,19 @@ import BackgroundImg from "@assets/background.png";
 import { Input } from "@components/Input";
 import { Button } from "@components/Button";
 
+type FormDataProps = {
+    name: string;
+    email: string;
+    password: string;
+    passwordConfirm: string;
+};
+
 export function SignUp() {
     const { goBack } = useNavigation();
 
-    const { control } = useForm();
+    const { control, handleSubmit } = useForm<FormDataProps>();
+
+    function handleSignUp(data: FormDataProps) {}
 
     function handleLogin() {
         goBack();
@@ -104,11 +113,16 @@ export function SignUp() {
                                 secureTextEntry
                                 onChangeText={onChange}
                                 value={value}
+                                onSubmitEditing={handleSubmit(handleSignUp)}
+                                returnKeyType="send"
                             />
                         )}
                     />
 
-                    <Button title="Criar e acessar" />
+                    <Button
+                        title="Criar e acessar"
+                        onPress={handleSubmit(handleSignUp)}
+                    />
                 </Center>
 
                 <Button
