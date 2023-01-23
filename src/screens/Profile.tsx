@@ -161,6 +161,7 @@ export function Profile() {
                         marginBottom={2}
                         marginTop={12}
                         alignSelf="flex-start"
+                        fontFamily="heading"
                     >
                         Alterar senha
                     </Heading>

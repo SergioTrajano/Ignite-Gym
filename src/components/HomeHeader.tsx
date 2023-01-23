@@ -28,6 +28,7 @@ export function HomeHeader() {
                 </Text>
 
                 <Heading
+                    fontFamily="heading"
                     color="gray.100"
                     fontSize="md"
                 >
