@@ -36,7 +36,7 @@ export function Profile() {
             if (selectedPhoto.assets[0].uri) {
                 const photoInfo = await FileSystem.getInfoAsync(selectedPhoto.assets[0].uri);
 
-                if (photoInfo.size && photoInfo.size > 5) {
+                if (photoInfo.size && photoInfo.size / 1024 ** 2 > 5) {
                     toast.show({
                         title: "A imagem deve ser menor que 5MB",
                         placement: "top",
