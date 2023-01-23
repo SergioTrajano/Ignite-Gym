@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { Center, ScrollView, VStack, Skeleton, Text, Heading } from "native-base";
+import { Center, ScrollView, VStack, Skeleton, Text, Heading, useToast } from "native-base";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
 
 import ScreenHeader from "@components/ScreenHeader";
 import { UserPhoto } from "@components/UserPhoto";
-import { Alert, TouchableOpacity } from "react-native";
+import { TouchableOpacity } from "react-native";
 import { Input } from "@components/Input";
 import { Button } from "@components/Button";
 
@@ -16,6 +16,8 @@ export function Profile() {
     const [userPhoto, setUserPhoto] = useState<string | undefined>(
         "http://github.com/SergioTrajano.png"
     );
+
+    const toast = useToast();
 
     async function handleUserPhotoSelect() {
         setPhotoisLoading(true);
@@ -34,8 +36,13 @@ export function Profile() {
             if (selectedPhoto.assets[0].uri) {
                 const photoInfo = await FileSystem.getInfoAsync(selectedPhoto.assets[0].uri);
 
-                if (photoInfo.size && photoInfo.size / 1024 ** 2 > 5) {
-                    Alert.alert("Imagem muito grande", "Escolha uma imagem de até 5MB");
+                if (photoInfo.size && photoInfo.size > 5) {
+                    toast.show({
+                        title: "A imagem deve ser menor que 5MB",
+                        placement: "bottom",
+                        bgColor: "red.500",
+                    });
+
                     return;
                 }
 
