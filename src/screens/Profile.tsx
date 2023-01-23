@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Center, ScrollView, VStack, Skeleton, Text } from "native-base";
+import { Center, ScrollView, VStack, Skeleton, Text, Heading } from "native-base";
 
 import ScreenHeader from "@components/ScreenHeader";
 import { UserPhoto } from "@components/UserPhoto";
@@ -57,6 +57,36 @@ export function Profile() {
                         isDisabled
                     />
                 </Center>
+
+                <VStack
+                    paddingX={10}
+                    marginTop={12}
+                    marginBottom={9}
+                >
+                    <Heading
+                        color="gray.200"
+                        fontSize="md"
+                        marginBottom={2}
+                    >
+                        Alterar senha
+                    </Heading>
+
+                    <Input
+                        placeholder="Senha antiga"
+                        secureTextEntry={true}
+                        backgroundColor="gray.600"
+                    />
+                    <Input
+                        placeholder="Nova senha"
+                        secureTextEntry={true}
+                        backgroundColor="gray.600"
+                    />
+                    <Input
+                        placeholder="Confirme nova senha"
+                        secureTextEntry={true}
+                        backgroundColor="gray.600"
+                    />
+                </VStack>
             </ScrollView>
         </VStack>
     );
