@@ -12,6 +12,19 @@ async function save(user: UserDTO) {
     }
 }
 
+async function get() {
+    try {
+        const storage = await AsyncStorage.getItem(USER_STORAGE);
+
+        const userData: UserDTO = storage ? JSON.parse(storage) : {};
+
+        return userData;
+    } catch (error) {
+        throw error;
+    }
+}
+
 export const storageUser = {
+    get,
     save,
 };
