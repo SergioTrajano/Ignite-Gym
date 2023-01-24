@@ -1,4 +1,5 @@
-import { Center, Heading, Image, Text, VStack, ScrollView } from "native-base";
+import { useState } from "react";
+import { Center, Heading, Image, Text, VStack, ScrollView, useToast } from "native-base";
 import { useNavigation } from "@react-navigation/native";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -9,6 +10,12 @@ import BackgroundImg from "@assets/background.png";
 
 import { Input } from "@components/Input";
 import { Button } from "@components/Button";
+
+import { api } from "@services/api";
+
+import { AppError } from "@utils/AppError";
+
+import { useAuth } from "@hooks/userAuth";
 
 type FormDataProps = {
     name: string;
@@ -33,6 +40,8 @@ const signUpSchema = yup.object({
 });
 
 export function SignUp() {
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+
     const { goBack } = useNavigation();
 
     const {
@@ -43,7 +52,32 @@ export function SignUp() {
         resolver: yupResolver(signUpSchema),
     });
 
-    function handleSignUp(data: FormDataProps) {}
+    const { signIn } = useAuth();
+
+    const toast = useToast();
+
+    async function handleSignUp({ name, email, password }: FormDataProps) {
+        setIsLoading(true);
+
+        try {
+            await api.post("/users", { name, email, password });
+
+            await signIn(email, password);
+        } catch (error) {
+            const isAppError = error instanceof AppError;
+            const title = isAppError
+                ? error.message
+                : "Não foi possível criar a conta. Tente novamente mais tarde.";
+
+            toast.show({
+                title,
+                placement: "top",
+                backgroundColor: "red.500",
+            });
+
+            setIsLoading(false);
+        }
+    }
 
     function handleLogin() {
         goBack();
@@ -149,6 +183,7 @@ export function SignUp() {
                     <Button
                         title="Criar e acessar"
                         onPress={handleSubmit(handleSignUp)}
+                        isLoading={isLoading}
                     />
                 </Center>
 
@@ -157,6 +192,7 @@ export function SignUp() {
                     variant="outline"
                     marginTop={20}
                     onPress={handleLogin}
+                    isLoading={isLoading}
                 />
             </VStack>
         </ScrollView>

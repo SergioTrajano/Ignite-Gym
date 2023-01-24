@@ -17,6 +17,13 @@ export function Button({ title, variant, ...rest }: Props) {
             _pressed={{
                 backgroundColor: variant === "outline" ? "gray.500" : "green.500",
             }}
+            isLoadingText={variant === "outline" ? title : ""}
+            _loading={
+                variant === "outline"
+                    ? { _text: { color: "green.500", fontFamily: "heading", fontSize: "sm" } }
+                    : {}
+            }
+            _spinner={variant === "outline" ? { display: "none" } : {}}
             {...rest}
         >
             <Text
