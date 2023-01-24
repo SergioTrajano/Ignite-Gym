@@ -4,10 +4,14 @@ import { USER_STORAGE } from "./storageConfig";
 
 import { UserDTO } from "@dtos/UserDTO";
 
-export async function storageUserSave(user: UserDTO) {
+async function save(user: UserDTO) {
     try {
         await AsyncStorage.setItem(USER_STORAGE, JSON.stringify(user));
     } catch (error) {
         throw error;
     }
 }
+
+export const storageUser = {
+    save,
+};
