@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Center, Heading, Image, Text, VStack, ScrollView, useToast } from "native-base";
 import { useNavigation } from "@react-navigation/native";
 import { useForm, Controller } from "react-hook-form";
@@ -26,6 +27,8 @@ const signInSchema = yup.object({
 });
 
 export function SignIn() {
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+
     const { navigate } = useNavigation<AuthNavigatorRoutesProps>();
 
     const { signIn } = useAuth();
@@ -41,6 +44,8 @@ export function SignIn() {
     });
 
     async function handleSignIn({ email, password }: FormDataProps) {
+        setIsLoading(true);
+
         try {
             await signIn(email, password);
         } catch (error) {
@@ -55,6 +60,8 @@ export function SignIn() {
                 placement: "top",
                 backgroundColor: "red.500",
             });
+
+            setIsLoading(false);
         }
     }
 
@@ -135,6 +142,7 @@ export function SignIn() {
                     <Button
                         title="Acessar"
                         onPress={handleSubmit(handleSignIn)}
+                        isLoading={isLoading}
                     />
                 </Center>
 
@@ -151,6 +159,7 @@ export function SignIn() {
                         title="Criar conta"
                         variant="outline"
                         onPress={handleNewAccount}
+                        isLoading={isLoading}
                     />
                 </Center>
             </VStack>
