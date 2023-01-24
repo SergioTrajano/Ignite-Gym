@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Center, Heading, Image, Text, VStack, ScrollView, useToast } from "native-base";
 import { useNavigation } from "@react-navigation/native";
 import { useForm, Controller } from "react-hook-form";
@@ -13,6 +14,8 @@ import { Button } from "@components/Button";
 import { api } from "@services/api";
 
 import { AppError } from "@utils/AppError";
+
+import { useAuth } from "@hooks/userAuth";
 
 type FormDataProps = {
     name: string;
@@ -37,6 +40,8 @@ const signUpSchema = yup.object({
 });
 
 export function SignUp() {
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+
     const { goBack } = useNavigation();
 
     const {
@@ -47,12 +52,17 @@ export function SignUp() {
         resolver: yupResolver(signUpSchema),
     });
 
+    const { signIn } = useAuth();
+
     const toast = useToast();
 
     async function handleSignUp({ name, email, password }: FormDataProps) {
+        setIsLoading(true);
+
         try {
-            const response = await api.post("/users", { name, email, password });
-            console.log(response.data);
+            await api.post("/users", { name, email, password });
+
+            await signIn(email, password);
         } catch (error) {
             const isAppError = error instanceof AppError;
             const title = isAppError
@@ -64,6 +74,8 @@ export function SignUp() {
                 placement: "top",
                 backgroundColor: "red.500",
             });
+
+            setIsLoading(false);
         }
     }
 
@@ -171,6 +183,7 @@ export function SignUp() {
                     <Button
                         title="Criar e acessar"
                         onPress={handleSubmit(handleSignUp)}
+                        isLoading={isLoading}
                     />
                 </Center>
 
@@ -179,6 +192,7 @@ export function SignUp() {
                     variant="outline"
                     marginTop={20}
                     onPress={handleLogin}
+                    isLoading={isLoading}
                 />
             </VStack>
         </ScrollView>
