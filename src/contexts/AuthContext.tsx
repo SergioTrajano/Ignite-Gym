@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useState } from "react";
+import { createContext, ReactNode, useEffect, useState } from "react";
 
 import { api } from "@services/api";
 
@@ -29,6 +29,20 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
             throw error;
         }
     }
+
+    async function loadUserData() {
+        try {
+            const userData = await storageUser.get();
+
+            setUser(userData);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    useEffect(() => {
+        loadUserData();
+    }, []);
 
     return <AuthContext.Provider value={{ user, signIn }}>{children}</AuthContext.Provider>;
 }
