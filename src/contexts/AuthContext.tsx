@@ -69,6 +69,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
             setIsLoadingUserStorageData(true);
 
             await storageUser.remove();
+            await storageToken.remove();
 
             setUser({} as UserDTO);
         } catch (error) {
