@@ -20,7 +20,16 @@ async function get() {
     }
 }
 
+async function remove() {
+    try {
+        await AsyncStorage.removeItem(AUTH_TOKEN_STORAGE);
+    } catch (error) {
+        throw error;
+    }
+}
+
 export const storageToken = {
     get,
     save,
+    remove,
 };
