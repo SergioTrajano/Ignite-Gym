@@ -1,5 +1,7 @@
-import { useState } from "react";
-import { FlatList, Heading, HStack, Text, VStack } from "native-base";
+import { useEffect, useState } from "react";
+import { FlatList, Heading, HStack, Text, VStack, useToast } from "native-base";
+
+import { api } from "@services/api";
 
 import { HomeHeader } from "@components/HomeHeader";
 import { Group } from "@components/Group";
@@ -7,9 +9,10 @@ import ExerciseCard from "@components/ExerciseCard";
 import { useNavigation } from "@react-navigation/native";
 
 import { NavigatorAppRoutesProps } from "@routes/app.routes";
+import { AppError } from "@utils/AppError";
 
 export function Home() {
-    const [groups, setGroups] = useState<string[]>(["costas", "bíceps", "tríceps", "ombro"]);
+    const [groups, setGroups] = useState<string[]>([]);
     const [exercises, setExercises] = useState<string[]>([
         "Puxada frontal",
         "remada curvada",
@@ -18,11 +21,34 @@ export function Home() {
     ]);
     const [groupSelect, setGroupSelected] = useState<string>("costas");
 
+    const toast = useToast();
     const { navigate } = useNavigation<NavigatorAppRoutesProps>();
 
     function handleOpenExerciseDetails() {
         navigate("exercise");
     }
+
+    async function fetchGroups() {
+        try {
+            const { data } = await api.get("/groups");
+
+            setGroups(data);
+        } catch (error) {
+            const isAppErro = error instanceof AppError;
+
+            const title = isAppErro ? error.message : "Não foi possível carregar os dados.";
+
+            toast.show({
+                title,
+                placement: "top",
+                backgroundColor: "red.500",
+            });
+        }
+    }
+
+    useEffect(() => {
+        fetchGroups();
+    }, []);
 
     return (
         <VStack>
