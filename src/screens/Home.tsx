@@ -9,10 +9,12 @@ import { ExerciseDTO } from "@dtos/ExerciseDTO";
 import { HomeHeader } from "@components/HomeHeader";
 import { Group } from "@components/Group";
 import ExerciseCard from "@components/ExerciseCard";
+import { Loading } from "@components/Loading";
 
 import { NavigatorAppRoutesProps } from "@routes/app.routes";
 
 export function Home() {
+    const [isLoading, setIsLoading] = useState<boolean>(true);
     const [groups, setGroups] = useState<string[]>([]);
     const [exercises, setExercises] = useState<ExerciseDTO[]>([]);
     const [groupSelected, setGroupSelected] = useState<string>("costas");
@@ -45,6 +47,8 @@ export function Home() {
     }
 
     async function fetchExercisesByGroup() {
+        setIsLoading(true);
+
         try {
             const { data } = await api.get(`/exercises/bygroup/${groupSelected}`);
 
@@ -58,6 +62,8 @@ export function Home() {
                 placement: "top",
                 backgroundColor: "red.500",
             });
+        } finally {
+            setIsLoading(false);
         }
     }
 
@@ -72,7 +78,7 @@ export function Home() {
     );
 
     return (
-        <VStack>
+        <VStack flex={1}>
             <HomeHeader />
 
             <FlatList
@@ -91,43 +97,49 @@ export function Home() {
                 marginY={10}
                 maxHeight={10}
                 minHeight={10}
-                flex={1}
             />
 
-            <VStack paddingX={8}>
-                <HStack
-                    justifyContent="space-between"
-                    marginBottom={5}
+            {isLoading ? (
+                <Loading />
+            ) : (
+                <VStack
+                    paddingX={8}
+                    flex={1}
                 >
-                    <Heading
-                        fontFamily="heading"
-                        color="gray.200"
-                        fontSize="md"
+                    <HStack
+                        justifyContent="space-between"
+                        marginBottom={5}
                     >
-                        Exercícios
-                    </Heading>
+                        <Heading
+                            fontFamily="heading"
+                            color="gray.200"
+                            fontSize="md"
+                        >
+                            Exercícios
+                        </Heading>
 
-                    <Text
-                        color="gray.200"
-                        fontSize="sm"
-                    >
-                        {exercises.length}
-                    </Text>
-                </HStack>
+                        <Text
+                            color="gray.200"
+                            fontSize="sm"
+                        >
+                            {exercises.length}
+                        </Text>
+                    </HStack>
 
-                <FlatList
-                    data={exercises}
-                    keyExtractor={(item) => item.id}
-                    renderItem={({ item }) => (
-                        <ExerciseCard
-                            data={item}
-                            onPress={handleOpenExerciseDetails}
-                        />
-                    )}
-                    showsVerticalScrollIndicator={false}
-                    _contentContainerStyle={{ paddingBottom: 20 }}
-                />
-            </VStack>
+                    <FlatList
+                        data={exercises}
+                        keyExtractor={(item) => item.id}
+                        renderItem={({ item }) => (
+                            <ExerciseCard
+                                data={item}
+                                onPress={handleOpenExerciseDetails}
+                            />
+                        )}
+                        showsVerticalScrollIndicator={false}
+                        _contentContainerStyle={{ paddingBottom: 20 }}
+                    />
+                </VStack>
+            )}
         </VStack>
     );
 }
