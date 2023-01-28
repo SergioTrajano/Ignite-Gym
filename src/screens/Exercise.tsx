@@ -24,9 +24,10 @@ type RoutesParamsProps = {
 
 export function Exercise() {
     const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [isRegistering, setIsRegistering] = useState<boolean>(false);
     const [exercise, setExercise] = useState<ExerciseDTO>({} as ExerciseDTO);
 
-    const { goBack } = useNavigation<NavigatorAppRoutesProps>();
+    const { goBack, navigate } = useNavigation<NavigatorAppRoutesProps>();
 
     const toast = useToast();
 
@@ -36,6 +37,33 @@ export function Exercise() {
 
     function handleGoBack() {
         goBack();
+    }
+
+    async function handleExerciseHistoryRegister() {
+        setIsRegistering(true);
+
+        try {
+            await api.post("/history", { exercise_id: exerciseId });
+
+            toast.show({
+                title: "Exercicio registrado no seu historico",
+                placement: "top",
+                backgroundColor: "green.700",
+            });
+
+            navigate("history");
+        } catch (error) {
+            const isAppError = error instanceof AppError;
+            const title = isAppError ? error.message : "Não foi possível registrar o exercicio.";
+
+            toast.show({
+                title,
+                placement: "top",
+                backgroundColor: "red.500",
+            });
+        } finally {
+            setIsRegistering(false);
+        }
     }
 
     async function fetchExerciseDetails() {
@@ -164,7 +192,11 @@ export function Exercise() {
                                 </HStack>
                             </HStack>
 
-                            <Button title="Marcar como realizado" />
+                            <Button
+                                title="Marcar como realizado"
+                                onPress={handleExerciseHistoryRegister}
+                                isLoading={isRegistering}
+                            />
                         </Box>
                     </VStack>
                 </ScrollView>
