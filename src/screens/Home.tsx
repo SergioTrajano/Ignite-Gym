@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { FlatList, Heading, HStack, Text, VStack, useToast } from "native-base";
 
 import { api } from "@services/api";
@@ -8,7 +9,6 @@ import { ExerciseDTO } from "@dtos/ExerciseDTO";
 import { HomeHeader } from "@components/HomeHeader";
 import { Group } from "@components/Group";
 import ExerciseCard from "@components/ExerciseCard";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
 
 import { NavigatorAppRoutesProps } from "@routes/app.routes";
 
@@ -118,7 +118,12 @@ export function Home() {
                 <FlatList
                     data={exercises}
                     keyExtractor={(item) => item.id}
-                    renderItem={({ item }) => <ExerciseCard onPress={handleOpenExerciseDetails} />}
+                    renderItem={({ item }) => (
+                        <ExerciseCard
+                            data={item}
+                            onPress={handleOpenExerciseDetails}
+                        />
+                    )}
                     showsVerticalScrollIndicator={false}
                     _contentContainerStyle={{ paddingBottom: 20 }}
                 />
