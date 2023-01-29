@@ -109,7 +109,37 @@ export function Profile() {
                     return;
                 }
 
-                setUserPhoto(selectedPhoto.assets[0].uri);
+                const fileExtension = selectedPhoto.assets[0].uri.split(".").pop();
+
+                const photoFile = {
+                    name: `${user.name}.${fileExtension}`.toLowerCase(),
+                    uri: selectedPhoto.assets[0].uri,
+                    type: `${selectedPhoto.assets[0].type}/${fileExtension}`,
+                } as any;
+
+                const userPhotoUploadForm = new FormData();
+                userPhotoUploadForm.append("avatar", photoFile);
+
+                const updatedAvatarResponse = await api.patch(
+                    "/users/avatar",
+                    userPhotoUploadForm,
+                    {
+                        headers: {
+                            "Content-Type": "multipart/form-data",
+                        },
+                    }
+                );
+
+                toast.show({
+                    title: "Foto atualizada.",
+                    placement: "top",
+                    backgroundColor: "green.500",
+                });
+
+                const userUpdate = user;
+                userUpdate.avatar = updatedAvatarResponse.data.avatar;
+
+                await updateUser(userUpdate);
             }
         } catch (error) {
             console.log(error);
