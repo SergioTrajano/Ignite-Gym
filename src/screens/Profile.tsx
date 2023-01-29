@@ -66,7 +66,6 @@ export function Profile() {
     const { user, updateUser } = useAuth();
 
     const [photoIsLoading, setPhotoisLoading] = useState<boolean>(false);
-    const [userPhoto, setUserPhoto] = useState<string | undefined>("");
 
     const toast = useToast();
 
@@ -197,7 +196,11 @@ export function Profile() {
                         display={photoIsLoading ? "flex" : "none"}
                     />
                     <UserPhoto
-                        source={userPhoto !== "" ? { uri: userPhoto } : UserPhotoDefaultPng}
+                        source={
+                            user.avatar
+                                ? { uri: `${api.defaults.baseURL}/avatar/${user.avatar}` }
+                                : UserPhotoDefaultPng
+                        }
                         alt="Foto do usuario"
                         size={PHOTO_SIZE}
                         display={photoIsLoading ? "none" : "flex"}
