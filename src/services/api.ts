@@ -3,12 +3,17 @@ import axios, { AxiosInstance } from "axios";
 import { storageToken } from "@storage/storageAuthToken";
 
 import { AppError } from "@utils/AppError";
-import { reject } from "lodash";
 
-type SignOut = () => void;
+type registerInterceptTokenManagerProps = {
+    signOut: () => void;
+    refreshedTokenUpdated: (newToken: string) => void;
+};
 
 type APIInstaceProps = AxiosInstance & {
-    registerInterceptTokenManager: (signOut: SignOut) => () => void;
+    registerInterceptTokenManager: ({
+        signOut,
+        refreshedTokenUpdated,
+    }: registerInterceptTokenManagerProps) => () => void;
 };
 
 type PromiseType = {
@@ -40,7 +45,7 @@ const process = ({ error, token = null }: ProcessQueueParams): void => {
     failedQueue = [];
 };
 
-api.registerInterceptTokenManager = (signOut) => {
+api.registerInterceptTokenManager = ({ signOut, refreshedTokenUpdated }) => {
     const interceptTokenManager = api.interceptors.response.use(
         (response) => response,
         async (requestError) => {
@@ -84,6 +89,8 @@ api.registerInterceptTokenManager = (signOut) => {
 
                             api.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
                             originalRequest.headers["Authorization"] = `Bearer ${data.token}`;
+
+                            refreshedTokenUpdated(data.token);
 
                             process({ error: null, token: data.token });
                             resolve(originalRequest);
