@@ -17,7 +17,7 @@ export function Home() {
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [groups, setGroups] = useState<string[]>([]);
     const [exercises, setExercises] = useState<ExerciseDTO[]>([]);
-    const [groupSelected, setGroupSelected] = useState<string>("costas");
+    const [groupSelected, setGroupSelected] = useState<string>("");
 
     const toast = useToast();
     const { navigate } = useNavigation<NavigatorAppRoutesProps>();
@@ -31,6 +31,7 @@ export function Home() {
             const { data } = await api.get("/groups");
 
             setGroups(data);
+            setGroupSelected(data[0]);
         } catch (error) {
             const isAppErro = error instanceof AppError;
 
