@@ -7,6 +7,8 @@ import * as FileSystem from "expo-file-system";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
+import { useAuth } from "@hooks/userAuth";
+
 import ScreenHeader from "@components/ScreenHeader";
 import { UserPhoto } from "@components/UserPhoto";
 import { Input } from "@components/Input";
@@ -18,6 +20,7 @@ const PHOTO_SIZE = 33;
 
 type FormDataProps = {
     name: string;
+    email: string;
     oldPassword: string;
     newPassword: string;
     newPasswordConfirm: string;
@@ -29,24 +32,34 @@ const changeProfileSchema = yup.object().shape({
     newPassword: yup
         .string()
         .trim()
+        .min(6, "A senha deve ter pelo menos 6 caracteres.")
         .when(["oldPassword"], {
             is: (oldPassword: string) => oldPassword,
             then: yup.string().required("Informe a nova senha.").trim(),
-        }),
+        })
+        .nullable()
+        .transform((value) => (value !== "" ? value : null)),
     newPasswordConfirm: yup
         .string()
         .trim()
-        .when(["newPassword"], {
-            is: (newPassword: string) => newPassword,
+        .nullable()
+        .transform((value) => (value !== "" ? value : null))
+        .oneOf([yup.ref("newPassword"), null], "As senham não coincidem.")
+        .when("newPassword", {
+            is: (newPassword: any) => newPassword !== null && newPassword !== "",
             then: yup
                 .string()
-                .required("Confirme a senha.")
-                .oneOf([yup.ref("newPassword"), null], "As senhas não coincidem.")
-                .trim(),
+                .trim()
+                .nullable()
+                .required("Confirme a nova senha.")
+                .transform((value) => (value !== "" ? value : null))
+                .oneOf([yup.ref("newPassword"), null], "As senham não coincidem."),
         }),
 });
 
 export function Profile() {
+    const { user } = useAuth();
+
     const [photoIsLoading, setPhotoisLoading] = useState<boolean>(false);
     const [userPhoto, setUserPhoto] = useState<string | undefined>("");
 
@@ -57,6 +70,10 @@ export function Profile() {
         handleSubmit,
         formState: { errors },
     } = useForm<FormDataProps>({
+        defaultValues: {
+            name: user.name,
+            email: user.email,
+        },
         resolver: yupResolver(changeProfileSchema),
     });
 
@@ -149,10 +166,18 @@ export function Profile() {
                         )}
                     />
 
-                    <Input
-                        placeholder="email@gmail.com"
-                        backgroundColor="gray.600"
-                        isDisabled
+                    <Controller
+                        name="email"
+                        control={control}
+                        render={({ field: { onChange, value } }) => (
+                            <Input
+                                placeholder="email@gmail.com"
+                                backgroundColor="gray.600"
+                                isDisabled
+                                onChangeText={onChange}
+                                value={value}
+                            />
+                        )}
                     />
 
                     <Heading
@@ -169,13 +194,12 @@ export function Profile() {
                     <Controller
                         control={control}
                         name="oldPassword"
-                        render={({ field: { onChange, value } }) => (
+                        render={({ field: { onChange } }) => (
                             <Input
                                 placeholder="Senha antiga"
                                 secureTextEntry={true}
                                 backgroundColor="gray.600"
                                 onChangeText={onChange}
-                                value={value}
                                 errorMessage={errors.oldPassword?.message}
                             />
                         )}
@@ -184,13 +208,12 @@ export function Profile() {
                     <Controller
                         control={control}
                         name="newPassword"
-                        render={({ field: { onChange, value } }) => (
+                        render={({ field: { onChange } }) => (
                             <Input
                                 placeholder="Nova senha"
                                 secureTextEntry={true}
                                 backgroundColor="gray.600"
                                 onChangeText={onChange}
-                                value={value}
                                 errorMessage={errors.newPassword?.message}
                             />
                         )}
@@ -199,16 +222,13 @@ export function Profile() {
                     <Controller
                         control={control}
                         name="newPasswordConfirm"
-                        render={({ field: { onChange, value } }) => (
+                        render={({ field: { onChange } }) => (
                             <Input
                                 placeholder="Confirme nova senha"
                                 secureTextEntry={true}
                                 backgroundColor="gray.600"
                                 onChangeText={onChange}
-                                value={value}
                                 errorMessage={errors.newPasswordConfirm?.message}
-                                onSubmitEditing={handleSubmit(handleProfileChange)}
-                                returnKeyType="send"
                             />
                         )}
                     />
