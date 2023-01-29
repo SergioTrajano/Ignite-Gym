@@ -6,13 +6,13 @@ import { UserDTO } from "@dtos/UserDTO";
 
 import { storageUser } from "@storage/storageUser";
 import { storageToken } from "@storage/storageAuthToken";
-import { string } from "yup";
 
 export type AuthContextDataProps = {
     user: UserDTO;
     token: string;
     signIn: (email: string, password: string) => Promise<void>;
     signOut: () => Promise<void>;
+    updateUser: (userData: UserDTO) => Promise<void>;
     isLoadingUserStorageData: boolean;
 };
 
@@ -64,6 +64,15 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
         api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     }
 
+    async function updateUser(userData: UserDTO) {
+        try {
+            setUser(userData);
+            await storageUser.save(userData);
+        } catch (error) {
+            throw error;
+        }
+    }
+
     async function signOut() {
         try {
             setIsLoadingUserStorageData(true);
@@ -104,7 +113,16 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
     }, []);
 
     return (
-        <AuthContext.Provider value={{ user, token, signIn, signOut, isLoadingUserStorageData }}>
+        <AuthContext.Provider
+            value={{
+                user,
+                token,
+                signIn,
+                signOut,
+                updateUser,
+                isLoadingUserStorageData,
+            }}
+        >
             {children}
         </AuthContext.Provider>
     );

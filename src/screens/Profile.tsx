@@ -7,6 +7,9 @@ import * as FileSystem from "expo-file-system";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
+import { api } from "@services/api";
+import { AppError } from "@utils/AppError";
+
 import { useAuth } from "@hooks/userAuth";
 
 import ScreenHeader from "@components/ScreenHeader";
@@ -21,44 +24,46 @@ const PHOTO_SIZE = 33;
 type FormDataProps = {
     name: string;
     email: string;
-    oldPassword: string;
-    newPassword: string;
+    old_password: string;
+    password: string;
     newPasswordConfirm: string;
 };
 
 const changeProfileSchema = yup.object().shape({
     name: yup.string().trim(),
-    oldPassword: yup.string().trim(),
+    oldPassword: yup
+        .string()
+        .trim()
+        .nullable()
+        .transform((value) => (value ? value : null)),
     newPassword: yup
         .string()
         .trim()
         .min(6, "A senha deve ter pelo menos 6 caracteres.")
-        .when(["oldPassword"], {
-            is: (oldPassword: string) => oldPassword,
-            then: yup.string().required("Informe a nova senha.").trim(),
-        })
         .nullable()
-        .transform((value) => (value !== "" ? value : null)),
+        .transform((value) => (value ? value : null)),
     newPasswordConfirm: yup
         .string()
         .trim()
         .nullable()
-        .transform((value) => (value !== "" ? value : null))
-        .oneOf([yup.ref("newPassword"), null], "As senham não coincidem.")
-        .when("newPassword", {
-            is: (newPassword: any) => newPassword !== null && newPassword !== "",
+        .transform((value) => (value ? value : null))
+        .oneOf([yup.ref("password"), null], "As senham não coincidem.")
+        .when("password", {
+            is: (newPassword: any) => newPassword,
             then: yup
                 .string()
                 .trim()
                 .nullable()
                 .required("Confirme a nova senha.")
                 .transform((value) => (value !== "" ? value : null))
-                .oneOf([yup.ref("newPassword"), null], "As senham não coincidem."),
+                .oneOf([yup.ref("password"), null], "As senham não coincidem."),
         }),
 });
 
 export function Profile() {
-    const { user } = useAuth();
+    const [isUpdating, setIsUpdating] = useState<boolean>(false);
+
+    const { user, updateUser } = useAuth();
 
     const [photoIsLoading, setPhotoisLoading] = useState<boolean>(false);
     const [userPhoto, setUserPhoto] = useState<string | undefined>("");
@@ -113,7 +118,36 @@ export function Profile() {
         }
     }
 
-    function handleProfileChange(data: FormDataProps) {}
+    async function handleProfileChange(data: FormDataProps) {
+        setIsUpdating(true);
+
+        try {
+            await api.put("/users", data);
+
+            toast.show({
+                title: "Perfil atualizado com sucesso",
+                placement: "top",
+                backgroundColor: "green.500",
+            });
+
+            const userUpdated = user;
+            userUpdated.name = data.name;
+
+            await updateUser(userUpdated);
+        } catch (error) {
+            const isAppErro = error instanceof AppError;
+
+            const title = isAppErro ? error.message : "Não foi possível atualizar os dados.";
+
+            toast.show({
+                title,
+                placement: "top",
+                backgroundColor: "red.500",
+            });
+        } finally {
+            setIsUpdating(false);
+        }
+    }
 
     return (
         <VStack flex={1}>
@@ -193,28 +227,28 @@ export function Profile() {
 
                     <Controller
                         control={control}
-                        name="oldPassword"
+                        name="old_password"
                         render={({ field: { onChange } }) => (
                             <Input
                                 placeholder="Senha antiga"
                                 secureTextEntry={true}
                                 backgroundColor="gray.600"
                                 onChangeText={onChange}
-                                errorMessage={errors.oldPassword?.message}
+                                errorMessage={errors.old_password?.message}
                             />
                         )}
                     />
 
                     <Controller
                         control={control}
-                        name="newPassword"
+                        name="password"
                         render={({ field: { onChange } }) => (
                             <Input
                                 placeholder="Nova senha"
                                 secureTextEntry={true}
                                 backgroundColor="gray.600"
                                 onChangeText={onChange}
-                                errorMessage={errors.newPassword?.message}
+                                errorMessage={errors.password?.message}
                             />
                         )}
                     />
@@ -237,6 +271,7 @@ export function Profile() {
                         title="Atualizar"
                         marginTop={4}
                         onPress={handleSubmit(handleProfileChange)}
+                        isLoading={isUpdating}
                     />
                 </Center>
             </ScrollView>
