@@ -24,7 +24,16 @@ async function get() {
     }
 }
 
+async function remove() {
+    try {
+        await AsyncStorage.removeItem(USER_STORAGE);
+    } catch (error) {
+        throw error;
+    }
+}
+
 export const storageUser = {
     get,
     save,
+    remove,
 };
